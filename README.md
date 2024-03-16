@@ -13,10 +13,10 @@ CARD GAME IDEA - BABI!
   a. when the total sum reaches 100, the next player should be able to get out of the situation by the following power cards (if they have)
     1. any face card of value 4, can either
       i) add 4 to the sum (in general, not when sum is 100)
-      ii) reverse play
+      ii) skip play (When sum = 100)
     2. any face card of value 7, can either
       i) add 7 to the sum (in general, not when sum is 100)
-      ii) skip play
+      ii) reverse play (When sum = 100) [not implemented for now]
     3. any Jack royal, can either
       i) add 10 to the sum (in general, not when sum is 100)
       ii) minus 10 from the sum
