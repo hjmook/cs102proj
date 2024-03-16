@@ -26,7 +26,7 @@ public class Card {
         this.rank = rank;
     }
 
-    public int getValue(String rank) {
+    public int getValue() {
         switch (rank) {
             case "Ace":
                 return 1;
@@ -54,7 +54,7 @@ public class Card {
                 return 20;
             // King is straight to 100, don't need to add any value
            default: 
-                return 1;
+                return 100;
         }
     }
 
