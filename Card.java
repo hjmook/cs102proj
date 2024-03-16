@@ -52,6 +52,8 @@ public class Card {
                 return 10;
             case "Q":
                 return 20;
+            case "K":
+                return 100;
             // King is straight to 100, don't need to add any value
            default: 
                 return 1;
