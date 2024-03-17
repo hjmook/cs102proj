@@ -78,7 +78,10 @@ public class Player {
             if (value + totalSum <= 100) {
                 validCards.add(card);
             }
-            else if (rank == "J" || rank == "Q") {
+            else if (rank == "J" || rank == "Q" || rank == "K") {
+                validCards.add(card);
+            }
+            else if (totalSum == 100 && rank == "4"){
                 validCards.add(card);
             }
         }
