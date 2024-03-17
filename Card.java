@@ -62,4 +62,17 @@ public class Card {
     public String toString() {
         return rank + " of " + suit;
     }
+
+    // New equals method to compare cards by suit and rank to determine equality
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof Card)){
+            return false;
+        }
+        Card otherCard = (Card)o;
+        if (this.rank.equals(otherCard.rank) && this.suit.equals(otherCard.suit)){
+            return true;
+        }
+        return false;
+    }
 }
