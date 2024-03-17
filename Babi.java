@@ -1,3 +1,4 @@
+
 import java.util.*;
 
 public class Babi {
@@ -76,6 +77,15 @@ public class Babi {
         System.out.printf("%s TURN: \n", currentPlayerName);
         System.out.println();
 
+        // Check if deckOfCards running low (add played pile into deckOfCards when left with 1)
+        if (deckOfCards.sizeOfDeck() == 1){
+            for(Card card : secondaryPool){
+                deckOfCards.returnCardToDeck(card);
+            }
+            deckOfCards.shuffleDeck();
+            secondaryPool.clear(); // clear secondaryPool to remove cards played since they are returned to the deck
+        }
+
         // Display current sum 
         if (totalSum == 100){
             System.out.printf("Test Case: CODE GOES HERE WHERE SUM == 100 \n");
@@ -85,6 +95,20 @@ public class Babi {
             System.out.printf("Current sum is: %d \n", totalSum);
             System.out.println();
         }
+
+        // Debugging cards/ deck (Counting cards) => currently problem arisises when there's reshuffling
+        int cardsInPlayersHands = 0;
+        for (Player p : allPlayers) {
+            cardsInPlayersHands += p.getPlayerLife();
+        }
+        int totalCards = deckOfCards.sizeOfDeck() + secondaryPool.size() + cardsInPlayersHands;
+        System.out.println("FOR DEBUGGING Counting cards:");
+        System.out.println("Cards in deck: " + deckOfCards.sizeOfDeck());
+        System.out.println("Cards in played pile: " + secondaryPool.size());
+        System.out.println("Cards in players' hands: " + cardsInPlayersHands);
+        System.out.println("Total cards: " + totalCards);
+        System.out.println("Correct number: " + (totalCards == 52));
+        System.out.println();
 
         // Display hand and input option
         currentPlayer.displayHand();
@@ -107,6 +131,7 @@ public class Babi {
                 }
                 deckOfCards.shuffleDeck();
                 totalSum = 0;
+                secondaryPool.clear();; // clear secondaryPool to remove cards played since they are returned to the deck
                 
                 nextPlayer();
             // player is not at his last life
@@ -125,12 +150,13 @@ public class Babi {
                 }
                 deckOfCards.shuffleDeck();
                 totalSum = 0;
+                secondaryPool.clear(); // clear secondaryPool to remove cards played since they are returned to the deck
             }
         // If don't want to kill self    
         }else{
             hasPreviousRoundDeath = false;
             if (totalSum == 100) {
-                // player has 4 options: either put a number 4, number 7, jack, queen or king
+                // player has 4 options: either put a number 4, jack, queen or king
                 
                     //System.out.printf("Test Case: CODE GOES HERE WHERE SUM == 100 \n");
                     Card drawnCardFromHand = currentPlayer.getCardFromHand(cardChoice);
@@ -193,6 +219,7 @@ public class Babi {
                         secondaryPool.add(drawnCardFromHand);
                         Card topCard = deckOfCards.drawTopCard();
                         currentPlayer.addCardToHand(topCard);
+                        deckOfCards.removeCardFromDeck(topCard); // Remove the drawn card from deck
                         System.out.println("You have taken a card from the deck.");
                     }
                     
@@ -224,7 +251,7 @@ public class Babi {
                     validTurn = true;
                     currentPlayer.removeCardFromHand(cardChoice);
                     secondaryPool.add(drawnCardFromHand);
-                }
+                } // Can add another else if here to allow "4" to be played as a skip turn if sum were to exceed 100 when played
                 else if (totalSum + value > 100) {
                     ArrayList<Card> validCards = currentPlayer.getValidCards(totalSum);
                     if (validCards.size() != 0){
@@ -247,6 +274,7 @@ public class Babi {
                 // after player removes a card from their hand, they take another one from the deck to replace it
                 Card topCard = deckOfCards.drawTopCard();
                 currentPlayer.addCardToHand(topCard);
+                deckOfCards.removeCardFromDeck(topCard); // Remove top card from deck
                 System.out.printf("%s has taken a card from the deck. \n", currentPlayerName);
                 System.out.println();
     
@@ -285,9 +313,15 @@ public class Babi {
                 deckOfCards.shuffleDeck();
             }
             try {
-                babi.playRound(babi.allPlayers, numberOfPlayers, deckOfCards, babi.secondaryPool);
+                babi.playRound(babi.allPlayers, numberOfPlayers, deckOfCards, babi.secondaryPool); // Problem with this line => will have to remove the cards in the secondary pool from the deck of cards to be distributed.
             } catch (InvalidCardException e) {
                 System.out.println(e.getMessage());
+            } finally {
+                // find a way to remove the secondarypool cards from the deckOfCards, 
+                // and update the secondaryPool cards so that the next round plays with 
+                // the updated deck and secondaryPool cards (This probably won't need to be
+                // in a finally block, can place right after the playRound() since there won't
+                // be any change in both piles of card if an invalid card is played)
             }
             if (babi.allPlayers.size() == 1) {
                 System.out.printf("Game Over. Winner: %s \n", babi.allPlayers.get(0).getPlayerName(babi.allPlayers.get(0).getPlayerNumber()));
