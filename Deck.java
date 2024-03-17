@@ -51,4 +51,15 @@ public class Deck {
         Card drawnCard = deckOfCards.remove(randomIndex);
         return drawnCard;
     }
+
+    // New method to debug card/ deck problem (When player draws card, it is not removed from the deck)
+    public void removeCardFromDeck(Card card){
+        Iterator iter = deckOfCards.iterator();
+        while(iter.hasNext()){
+            Card c = (Card)iter.next();
+            if (c.equals(card)){
+                iter.remove();
+            }
+        }
+    }
 }
