@@ -13,7 +13,7 @@ public class Player {
         this.playerHand = new ArrayList<Card>();
     }
 
-    public String getPlayerName(int player) {
+    public String getPlayerName() {
         return playerName;
     }
 
@@ -58,6 +58,10 @@ public class Player {
             i++;
         }
         System.out.print("\n");
+    }
+
+    public ArrayList<Card> getHand() {
+        return playerHand;
     }
 
     public void loseLife(Deck deckOfCards) {
