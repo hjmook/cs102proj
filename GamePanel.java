@@ -1,7 +1,10 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+
+import org.w3c.dom.events.MouseEvent;
 
 public class GamePanel extends JPanel {
     private int cardWidth = 110;
@@ -17,15 +20,7 @@ public class GamePanel extends JPanel {
         setBackground(new Color(53, 101, 77));
         try {
             graphics.setFont(new Font("Arial", Font.BOLD, 28));
-            graphics.drawString(player.getPlayerName() +"'s Turn", 50, 50);
-            // Main Players hand
-            for (int i = 0; i < 4; i++) {
-                Card card = hand.get(i);
-                Image cardImg = new ImageIcon(getClass().getResource(card.getImgPath())).getImage();
-                graphics.drawImage(cardImg, 370 + (cardWidth + 5) * i, 600, cardWidth, cardHeight, null);
-            }
-
-            // Other Players hand
+            graphics.drawString(player.getPlayerName() + "'s Turn", 50, 50);
             if (numOfPlayers == 2) {
                 drawPosition3(graphics, cardWidth, cardHeight);
             } else if (numOfPlayers == 3) {
@@ -45,6 +40,27 @@ public class GamePanel extends JPanel {
         this.numOfPlayers = numOfPlayers;
         this.player = player;
         this.hand = player.getHand();
+        this.setLayout(null);
+
+        JButton[] cardArr = new JButton[4];
+        for (int i = 0; i < 4; i++) {
+            
+            Card card = hand.get(i);
+            Image cardImg = new ImageIcon(getClass().getResource(card.getImgPath())).getImage().getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+            ImageIcon imageIcon = new ImageIcon(cardImg);
+            cardArr[i] = new JButton(imageIcon);
+            cardArr[i].setName(Integer.toString(i));
+            cardArr[i].setBounds(372 + (cardWidth + 5) * i, 600, cardWidth, cardHeight);
+
+            cardArr[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JButton button = (JButton) e.getSource();
+                    System.out.println("Remove card " + hand.get(Integer.parseInt(button.getName())));
+                }
+            });
+
+            this.add(cardArr[i]);
+        }
     }
 
     public void drawPosition2(Graphics graphics, int cardWidth, int cardHeight) {
@@ -57,7 +73,7 @@ public class GamePanel extends JPanel {
     public void drawPosition3(Graphics graphics, int cardWidth, int cardHeight) {
         for (int j = 0; j < 4; j++) {
             Image cardImg = new ImageIcon(getClass().getResource("./cards/card-imgs/BACK.png")).getImage();
-            graphics.drawImage(cardImg, 370 + (cardWidth + 5) * j, 50, cardWidth, cardHeight, null);
+            graphics.drawImage(cardImg, 372 + (cardWidth + 5) * j, 50, cardWidth, cardHeight, null);
         }
     }
 
