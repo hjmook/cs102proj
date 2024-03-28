@@ -43,11 +43,11 @@ public class Player {
     }
 
     public Card getCardFromHand(int choice) {
-        return playerHand.get(choice - 1);
+        return playerHand.get(choice);
     }
 
     public void removeCardFromHand(int choice) {
-        playerHand.remove(choice - 1);
+        playerHand.remove(choice);
     }
 
     public void displayHand() {

@@ -16,12 +16,11 @@ public class GameController {
         players = startMenu.getPlayers();
         numOfPlayers = players.size();
 
-        for (Player player : players) {
-            System.out.println(player.getPlayerName());
-        }
-
         Deck deck = new Deck();
         deck.shuffleDeck();
+
+        DiscardPile discardPile = new DiscardPile();
+
         // Deal Hand
         for (Player player : players) {
             for (int i = 0; i < 4; i++) {
@@ -30,16 +29,16 @@ public class GameController {
             }
         }
 
-        buildBoard(0);
+        buildBoard(0, deck, discardPile);
     }
 
-    public void buildBoard(int playerNumber) {
+    public void buildBoard(int playerNumber, Deck deck, DiscardPile discardPile) {
         int boardWidth = 1200;
         int boardHeight = 1000;
 
         Player player = players.get(playerNumber);
         JFrame frame = new JFrame("Hundred For Now");
-        GamePanel gamePanel = new GamePanel(numOfPlayers, player);
+        GamePanel gamePanel = new GamePanel(numOfPlayers, player, deck, discardPile);
 
         frame.add(gamePanel);
         frame.setVisible(true);

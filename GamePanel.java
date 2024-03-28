@@ -1,26 +1,56 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-
 import javax.swing.*;
-
-import org.w3c.dom.events.MouseEvent;
 
 public class GamePanel extends JPanel {
     private int cardWidth = 110;
     private int cardHeight = 154;
     private int numOfPlayers;
-    private ArrayList<Card> hand;
+    private Deck deck;
     private Player player;
+    private DiscardPile discardPile;
 
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-        setLayout(new BorderLayout());
-        setBackground(new Color(53, 101, 77));
         try {
             graphics.setFont(new Font("Arial", Font.BOLD, 28));
             graphics.drawString(player.getPlayerName() + "'s Turn", 50, 50);
+
+            // Main Player
+            JButton[] cardArr = new JButton[4];
+            for (int i = 0; i < 4; i++) {
+                Card card = player.getCardFromHand(i);
+                Image cardImg = new ImageIcon(getClass().getResource(card.getImgPath())).getImage()
+                        .getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+                ImageIcon imageIcon = new ImageIcon(cardImg);
+                cardArr[i] = new JButton(imageIcon);
+                cardArr[i].setName(Integer.toString(i));
+                cardArr[i].setBounds(372 + (cardWidth + 5) * i, 600, cardWidth, cardHeight);
+                this.add(cardArr[i]);
+
+                cardArr[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        JButton button = (JButton) e.getSource();
+
+                        Card discardedCard = player.getCardFromHand(Integer.parseInt(button.getName()));
+                        player.removeCardFromHand(Integer.parseInt(button.getName()));
+                        System.out.print(discardedCard.toString());
+                        discardPile.addToDiscardPile(discardedCard);
+
+                        Card newCard = deck.drawRandomCard();
+                        player.addCardToHand(newCard);
+                        Image newCardImg = new ImageIcon(getClass().getResource(newCard.getImgPath())).getImage()
+                                .getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+                        ImageIcon newImageIcon = new ImageIcon(newCardImg);
+                        button.setIcon(newImageIcon);
+
+                        repaint();
+                    }
+                });
+            }
+
+            // Other players
             if (numOfPlayers == 2) {
                 drawPosition3(graphics, cardWidth, cardHeight);
             } else if (numOfPlayers == 3) {
@@ -31,36 +61,24 @@ public class GamePanel extends JPanel {
                 drawPosition3(graphics, cardWidth, cardHeight);
                 drawPosition4(graphics, cardWidth, cardHeight);
             }
+
+            // Discard Pile
+            if (discardPile.sizeOfDiscardPile() > 0) {
+                Image cardImg = new ImageIcon(getClass().getResource(discardPile.getLastdiscardedCard().getImgPath())).getImage();
+                graphics.drawImage(cardImg, 540, 300, cardWidth, cardHeight, null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public GamePanel(int numOfPlayers, Player player) {
+    public GamePanel(int numOfPlayers, Player player, Deck deck, DiscardPile discardPile) {
         this.numOfPlayers = numOfPlayers;
         this.player = player;
-        this.hand = player.getHand();
+        this.deck = deck;
+        this.discardPile = discardPile;
         this.setLayout(null);
-
-        JButton[] cardArr = new JButton[4];
-        for (int i = 0; i < 4; i++) {
-            
-            Card card = hand.get(i);
-            Image cardImg = new ImageIcon(getClass().getResource(card.getImgPath())).getImage().getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
-            ImageIcon imageIcon = new ImageIcon(cardImg);
-            cardArr[i] = new JButton(imageIcon);
-            cardArr[i].setName(Integer.toString(i));
-            cardArr[i].setBounds(372 + (cardWidth + 5) * i, 600, cardWidth, cardHeight);
-
-            cardArr[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    JButton button = (JButton) e.getSource();
-                    System.out.println("Remove card " + hand.get(Integer.parseInt(button.getName())));
-                }
-            });
-
-            this.add(cardArr[i]);
-        }
+        this.setBackground(new Color(53, 101, 77));
     }
 
     public void drawPosition2(Graphics graphics, int cardWidth, int cardHeight) {
